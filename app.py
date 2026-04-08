@@ -26,7 +26,7 @@ def recommend():
     dietary = request.form.get("dietary")
 
     restaurants = load_restaurants()
-
+    
     # TEMP: just return empty results for now
     return render_template("results.html", recommendations=[])
 
