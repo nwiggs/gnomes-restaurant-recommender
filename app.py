@@ -27,8 +27,17 @@ def recommend():
 
     restaurants = load_restaurants()
     
-    # TEMP: just return empty results for now
-    return render_template("results.html", recommendations=[])
+    recommendations = []
+    for r in restaurants:
+        if cuisine != "Any" and r["cuisine"].lower() != cuisine.lower():
+            continue
+        if price != "Any" and r["price"] != price:
+            continue
+        if dietary != "Any" and dietary.lower() not in r["dietary_tags"]:
+            continue
+        recommendations.append(r)
+    
+    return render_template("results.html", recommendations=recommendations, cuisine=cuisine, price=price, dietary=dietary)
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5001)
