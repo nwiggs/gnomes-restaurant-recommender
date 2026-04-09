@@ -9,7 +9,7 @@ def load_restaurants():
         with open("restaurants.csv", newline="", encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                row["dietary_tags"] = [tag.strip().lower() for tag in row["dietary_tags"].split(",")]
+                row["dietary_tags"] = [tag.strip().lower() for tag in row["dietary_tags"].split(",") if tag.strip()]
                 restaurants.append(row)
     except FileNotFoundError:
         print("CSV file not found yet.")
@@ -21,14 +21,22 @@ def home():
 
 @app.route("/recommend", methods=["POST"])
 def recommend():
-    cuisine = request.form.get("cuisine")
-    price = request.form.get("price")
-    dietary = request.form.get("dietary")
+    cuisine = request.form.get("cuisine", "any")
+    price   = request.form.get("price", "any")
+    dietary = request.form.get("dietary", "any").strip().lower()
 
     restaurants = load_restaurants()
-    
-    # TEMP: just return empty results for now
-    return render_template("results.html", recommendations=[])
+
+    filtered = []
+    for r in restaurants:
+        match_cuisine = cuisine == "any" or r["cuisine"].lower() == cuisine.lower()
+        match_price   = price == "any"   or r["price"] == price
+        match_dietary = dietary == "any"  or dietary in r["dietary_tags"]
+
+        if match_cuisine and match_price and match_dietary:
+            filtered.append(r)
+
+    return render_template("results.html", recommendations=filtered)
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
