@@ -1,40 +1,628 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Restaurant Finder</title>
+    <title>Dallas Restaurant Finder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        @font-face {
+            font-family: "Midcent Disco";
+            src: local("Midcent Disco");
+            font-display: swap;
+        }
+
+        :root {
+            --sky-top: #87ceeb;
+            --sky-bottom: #e0f6ff;
+            --bubble-light: #e8f4ff;
+            --bubble-dark: #b3d9ff;
+            --accent: #f5e3c1;
+            --text-dark: #0a2342;
+            --shadow-1: 0 18px 46px rgba(0, 0, 0, 0.45);
+            --shadow-2: 0 10px 26px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Trebuchet MS", "Franklin Gothic Medium", "Arial Narrow", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 18% 22%, rgba(153, 196, 255, 0.35) 0, rgba(153, 196, 255, 0) 32%),
+                radial-gradient(circle at 78% 20%, rgba(140, 241, 255, 0.26) 0, rgba(140, 241, 255, 0) 30%),
+                radial-gradient(circle at 50% 130%, rgba(22, 8, 71, 0.85) 0, rgba(22, 8, 71, 0) 56%),
+                radial-gradient(circle at 10% 60%, rgba(255, 255, 255, 0.18) 0 2px, transparent 3px),
+                radial-grtext-dark);
+            background: linear-gradient(180deg, var(--sky-top), var(--sky-bottom
+        }
+
+        .food-bg-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .food-bg-icon {
+            position: absolute;
+            transform: translate(-50%, -50%) rotate(var(--rotate));
+            font-size: var(--size);
+            opacity: var(--opacity);
+         bubble-sky {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bubble-field {
+            position: fixed;
+            inset: 0;
+            pointer-events: auto;
+            z-index: 2;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, var(--bubble-light), var(--bubble-dark));
+            border: 2px solid rgba(255, 255, 255, 0.6);
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15), inset -2px -2px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0.9;
+            transition: opacity 0.2s ease;
+        }
+
+        .bubble:hover {
+            opacity: 1;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2), inset -2px -2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .bubble.popping {
+            animation: pop-bubble 0.6s ease-out forwards;
+        }
+
+        @keyframes pop-bubble {
+            0% {
+                opacity: 0.9;
+                transform: scale(1);
+            }
+            60% {
+                opacity: 0.5;
+                transform: scale(1.05);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(0.3
+
+        .title {
+            margin: 8px 0 0;
+            text-align: center;
+            font-family: "Midcent Disco", "Trebuchet MS", "Lucida Sans Unicode", sans-serif;
+            letter-spacing: 1.1px;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            line-height: 1.1;
+            color: var(--gold-1);
+            text-shadow:
+                0 2px 0 #3d200a,
+                0 0 16px rgba(248, 190, 90, 0.32);
+        }
+
+        .controls-wrap {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.85);
+            border: 2px solid rgba(86, 162, 218, 0.4);
+            border-radius: 18px;
+            box-shadow: var(--shadow-1);
+            backdrop-filter: blur(2px);
+            padding: 16px;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .control-group {
+            min-width: 200px;
+            flex: 1 1 200px;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-dark);
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(86, 162, 218, 0.5);
+            border-radius: 10px;
+            background: linear-gradient(180deg, #ffffff, #f8fbfd);
+            color: var(--text-dark);
+            font-size: 0.95rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+            outline: none;
+            transition: border-color 0.2s ease;
+        }
+
+        select:focus {
+            border-color: #56a2da;
+            box-shadow: 0 0 0 3px rgba(86, 162, 218, 0.15);
+        }
+
+        .note {
+            margin: 10px 0 0;
+            font-size: 0.9rem;
+            text-align: center;
+            color: var(--text-dark);
+        }
+
+        .status {
+            margin-top: 8px;
+            min-height: 24px;
+            font-weight: 600;
+            color: #56a2da;
+            text-align: center;
+        }
+
+        .button-group {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .fetch-btn {
+            position: relative;
+            border: 2px solid #56a2da;
+            background: linear-gradient(180deg, #56a2da, #3d7ba6);
+            color: #ffffff;
+            min-width: 180px;
+            height: 48px;
+            border-radius: 10px;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.2);
+            transition: transform 0.15s ease, filter 0.2s ease;
+            font-size: 0.95rem;
+        }
+
+        .fetch-btn:hover {
+            filter: brightness(1.08);
+        }
+
+        .fetch-btn:active {
+            transform: scale(0.97);
+        }
+
+        .fetch-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        .meta {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.95rem;
+            min-height: 20px;
+            color: var(--text-dark);
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 35, 66, 0.7);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            backdrop-filter: blur(3px);
+            overflow: hidden;
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal {
+            position: relative;
+            z-index: 2;
+            width: min(500px, 100%);
+            background: linear-gradient(180deg, #ffffff, #f4f9fc);
+            border: 2px solid rgba(86, 162, 218, 0.4);
+            border-radius: 18px;
+            padding: 24px;
+            box-shadow: 0 22px 60px rgba(0, 0, 0, 0.3);
+            color: var(--text-dark);
+        }
+
+        .modal h2 {
+            margin: 0 0 12px;
+            font-size: 1.8rem;
+            color: var(--text-dark);
+        }
+
+        .modal p {
+            margin: 0 0 16px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .chips {
+            margin: 16px 0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            background: linear-gradient(180deg, #dceeff, #c5e3f4);
+            border: 1px solid rgba(86, 162, 218, 0.3);
+            border-radius: 12px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+
+        .actions {
+            margin-top: 16px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .close-btn {
+            border: 2px solid #56a2da;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background: linear-gradient(180deg, #56a2da, #3d7ba6);
+            color: #ffffff;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+            transition: transform 0.15s ease, filter 0.2s ease;
+        }
+
+        .close-btn:hover {
+            filter: brightness(1.08);
+        }
+
+        .close-btn:active {
+            transform: scale(0.96);
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 14px;
+            }
+
+            .controls-row {
+                gap: 10px;
+            }
+
+            .control-group {
+                min-width: 160px;
+            }
+
+            .fetch-btn {
+                min-width: 140px;
+                height: 44px;
+                font-size: 0.85rem;
+            }
+
+            .title {
+                font-size: clamp(1.4rem, 3vw, 1.8rem);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .bubble {
+                animation: none;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Dallas Restaurant Recommender</h1>
+    <div class="bubble-sky" aria-hidden="true"></div>
+    <div id="bubble-field" class="bubble-field"></div>
+    
+    <div class="page">
+        <h1 class="title">Find a Restaurant in Dallas</h1>
 
-    <form action="/recommend" method="POST">
-        <label>Cuisine:</label>
-        <select name="cuisine">
-            <option>Any</option>
-            <option>American</option>
-            <option>Mexican</option>
-        </select>
+        <section class="controls-wrap">
+            <form id="filters-form" class="controls-row">
+                <div class="control-group">
+                    <label for="cuisine">Cuisine (optional)</label>
+                    <select id="cuisine" name="cuisine">
+                        <option value="Any">Any</option>
+                        {% for cuisine in options.cuisines %}
+                        <option value="{{ cuisine }}">{{ cuisine }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <br><br>
+                <div class="control-group">
+                    <label for="price">Price (optional)</label>
+                    <select id="price" name="price">
+                        <option value="Any" selected>Any</option>
+                        {% for price in options.prices %}
+                        <option value="{{ price }}">{{ price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <label>Price:</label>
-        <select name="price">
-            <option>Any</option>
-            <option>$</option>
-            <option>$$</option>
-        </select>
+                <div class="control-group">
+                    <label for="dietary">Dietary (optional)</label>
+                    <select id="dietary" name="dietary">
+                        <option value="Any">No restriction</option>
+                        {% for tag in options.dietary %}
+                        <option value="{{ tag }}">{{ tag|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
 
-        <br><br>
+            <p class="note">Select filters above and click "Find Restaurants"</p>
+            <div class="button-group">
+                <button id="fetch-btn" class="fetch-btn" type="button">Find Restaurants</button>
+            </div>
+            <p id="status" class="status" aria-live="polite"></p>
+        </section>
 
-        <label>Dietary:</label>
-        <select name="dietary">
-            <option>Any</option>
-            <option>vegetarian</option>
-            <option>vegan</option>
-        </select>
+        <p id="wheel-meta" class="meta"></p>
+    </div>
 
-        <br><br>
+    <div id="result-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="result-title">
+        <div class="modal">
+            <h2 id="result-title"></h2>
+            <p id="result-description"></p>
+            <div class="chips" id="result-chips"></div>
+            <div class="actions">
+                <button id="close-modal" class="close-btn" type="button">Close</button>
+            </div>
+        </div>
+    </div>
 
-        <button type="submit">Find Restaurants</button>
-    </form>
+    <script>
+        const bubbleField = document.getElementById("bubble-field");
+        const fetchBtn = document.getElementById("fetch-btn");
+        const statusEl = document.getElementById("status");
+        const metaEl = document.getElementById("wheel-meta");
+        const form = document.getElementById("filters-form");
+        const modal = document.getElementById("result-modal");
+        const closeModalBtn = document.getElementById("close-modal");
+        const titleEl = document.getElementById("result-title");
+        const descEl = document.getElementById("result-description");
+        const chipsEl = document.getElementById("result-chips");
+
+        let restaurants = [];
+        let bubbles = [];
+        let fetching = false;
+
+        const MIN_BUBBLE_SIZE = 60;
+        const MAX_BUBBLE_SIZE = 140;
+        const MAX_BUBBLES_PER_VIEW = 12;
+
+        // Calculate bubble size based on count
+        function calculateBubbleSize(count) {
+            if (count === 0) return MIN_BUBBLE_SIZE;
+            if (count <= 3) return MAX_BUBBLE_SIZE;
+            if (count <= 6) return Math.max(MIN_BUBBLE_SIZE + 20, MAX_BUBBLE_SIZE - 20);
+            return MIN_BUBBLE_SIZE + 10;
+        }
+
+        // Create bubble elements
+        function createBubbles(items) {
+            bubbleField.replaceChildren();
+            bubbles = [];
+
+            const bubbleSize = calculateBubbleSize(items.length);
+            const visibleCount = Math.min(items.length, MAX_BUBBLES_PER_VIEW);
+
+            for (let i = 0; i < visibleCount; i++) {
+                const bubble = document.createElement("div");
+                bubble.className = "bubble";
+                bubble.style.width = bubbleSize + "px";
+                bubble.style.height = bubbleSize + "px";
+
+                const x = Math.random() * (window.innerWidth - bubbleSize);
+                const y = window.innerHeight * 0.2 + Math.random() * (window.innerHeight * 0.5);
+                
+                bubble.style.left = x + "px";
+                bubble.style.top = y + "px";
+
+                const restaurantIndex = i % items.length;
+                const bubbleData = {
+                    el: bubble,
+                    restaurant: items[restaurantIndex],
+                    x: x,
+                    y: y,
+                    vx: (Math.random() - 0.5) * 1.5,
+                    vy: (Math.random() - 0.5) * 1.5,
+                    size: bubbleSize,
+                };
+
+                bubble.addEventListener("click", () => popBubble(bubbleData));
+                bubbleField.appendChild(bubble);
+                bubbles.push(bubbleData);
+            }
+
+            animateBubbles();
+        }
+
+        // Pop bubble animation and show details
+        function popBubble(bubbleData) {
+            bubbleData.el.classList.add("popping");
+            setTimeout(() => {
+                bubbles = bubbles.filter(b => b !== bubbleData);
+                bubbleData.el.remove();
+                showResult(bubbleData.restaurant);
+            }, 300);
+        }
+
+        // Animate floating bubbles
+        function animateBubbles() {
+            const padding = 20;
+            const maxX = window.innerWidth - padding;
+            const minX = padding;
+            const maxY = window.innerHeight - padding;
+            const minY = window.innerHeight * 0.15;
+
+            function update() {
+                bubbles.forEach((b) => {
+                    // Update position
+                    b.x += b.vx;
+                    b.y += b.vy;
+
+                    // Bounce off walls
+                    if (b.x - b.size / 2 <= minX) {
+                        b.x = minX + b.size / 2;
+                        b.vx = Math.abs(b.vx);
+                    }
+                    if (b.x + b.size / 2 >= maxX) {
+                        b.x = maxX - b.size / 2;
+                        b.vx = -Math.abs(b.vx);
+                    }
+                    if (b.y - b.size / 2 <= minY) {
+                        b.y = minY + b.size / 2;
+                        b.vy = Math.abs(b.vy);
+                    }
+                    if (b.y + b.size / 2 >= maxY) {
+                        b.y = maxY - b.size / 2;
+                        b.vy = -Math.abs(b.vy);
+                    }
+
+                    // Apply slight buoyancy
+                    b.vy -= 0.1;
+
+                    // Slight damping
+                    b.vx *= 0.995;
+                    b.vy *= 0.995;
+
+                    // Update DOM
+                    b.el.style.left = (b.x - b.size / 2) + "px";
+                    b.el.style.top = (b.y - b.size / 2) + "px";
+                });
+
+                if (bubbles.length > 0) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            update();
+        }
+
+        // Fetch restaurants from backend
+        async function fetchRestaurants() {
+            if (fetching) return;
+            
+            fetching = true;
+            fetchBtn.disabled = true;
+            setStatus("Loading restaurants...");
+
+            const payload = {
+                cuisine: form.cuisine.value,
+                price: form.price.value,
+                dietary: form.dietary.value,
+            };
+
+            try {
+                const response = await fetch("/spin-options", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                const data = await response.json();
+                
+                if (!response.ok || !data.ok) {
+                    setStatus(data.message || "Could not load restaurants.");
+                    restaurants = [];
+                } else {
+                    restaurants = data.restaurants || [];
+                    setStatus(data.message);
+                    createBubbles(restaurants);
+                    
+                    if (restaurants.length > 0) {
+                        metaEl.textContent = `${restaurants.length} restaurant(s) floating in the sky. Click a bubble!`;
+                    } else {
+                        metaEl.textContent = "No restaurants found. Try adjusting filters.";
+                    }
+                }
+            } catch (error) {
+                setStatus("Error loading restaurants.");
+                console.error(error);
+            } finally {
+                fetching = false;
+                fetchBtn.disabled = false;
+            }
+        }
+
+        // Show restaurant details modal
+        function showResult(restaurant) {
+            titleEl.textContent = restaurant.name;
+            descEl.textContent = restaurant.description;
+            chipsEl.innerHTML = "";
+
+            const chips = [
+                `Cuisine: ${restaurant.cuisine}`,
+                `Price: ${restaurant.price}`,
+                `Dietary: ${(restaurant.dietary_tags || []).join(", ") || "None listed"}`,
+            ];
+
+            chips.forEach((text) => {
+                const chip = document.createElement("span");
+                chip.className = "chip";
+                chip.textContent = text;
+                chipsEl.appendChild(chip);
+            });
+
+            modal.classList.add("show");
+            closeModalBtn.focus();
+        }
+
+        function setStatus(message) {
+            statusEl.textContent = message;
+        }
+
+        // Event listeners
+        fetchBtn.addEventListener("click", fetchRestaurants);
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("show");
+            fetchBtn.focus();
+        });
+
+        modal.addEventListener("click", (event) => {
+            if (event.target === modal) {
+                modal.classList.remove("show");
+            }
+        });
+
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                modal.classList.remove("show");
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener("resize", () => {
+            if (bubbles.length > 0) {
+                createBubbles(restaurants);
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,7 +1,15 @@
-from flask import Flask, render_template, request
+from flask import Flask, jsonify, render_template, request
 import csv
 
 app = Flask(__name__)
+
+
+def normalize(value):
+    return (value or "").strip().lower()
+
+
+def normalize_price(value):
+    return (value or "").strip()
 
 def load_restaurants():
     restaurants = []
@@ -9,34 +17,77 @@ def load_restaurants():
         with open("restaurants.csv", newline="", encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
-                row["dietary_tags"] = [tag.strip().lower() for tag in row["dietary_tags"].split(",") if tag.strip()]
+                row["dietary_tags"] = [tag.strip().lower() for tag in row["dietary_tags"].split(",")]
                 restaurants.append(row)
     except FileNotFoundError:
         print("CSV file not found yet.")
     return restaurants
 
-@app.route("/")
-def home():
-    return render_template("index.html")
 
-@app.route("/recommend", methods=["POST"])
-def recommend():
-    cuisine = request.form.get("cuisine", "any")
-    price   = request.form.get("price", "any")
-    dietary = request.form.get("dietary", "any").strip().lower()
+def get_filter_options(restaurants):
+    cuisines = sorted({r["cuisine"] for r in restaurants})
+    prices = sorted({r["price"] for r in restaurants}, key=len)
+    dietary = sorted({tag for r in restaurants for tag in r["dietary_tags"]})
+    return {
+        "cuisines": cuisines,
+        "prices": prices,
+        "dietary": dietary,
+    }
 
-    restaurants = load_restaurants()
+
+def filter_restaurants(restaurants, cuisine, price, dietary):
+    cuisine_value = normalize(cuisine)
+    price_value = normalize_price(price)
+    dietary_value = normalize(dietary)
 
     filtered = []
-    for r in restaurants:
-        match_cuisine = cuisine == "any" or r["cuisine"].lower() == cuisine.lower()
-        match_price   = price == "any"   or r["price"] == price
-        match_dietary = dietary == "any"  or dietary in r["dietary_tags"]
+    for restaurant in restaurants:
+        if cuisine_value and cuisine_value != "any":
+            if normalize(restaurant.get("cuisine")) != cuisine_value:
+                continue
 
-        if match_cuisine and match_price and match_dietary:
-            filtered.append(r)
+        if price_value and normalize(price_value) != "any" and restaurant.get("price") != price_value:
+            continue
 
-    return render_template("results.html", recommendations=filtered)
+        if dietary_value and dietary_value not in {"any", "none", "no restriction"}:
+            if dietary_value not in restaurant.get("dietary_tags", []):
+                continue
+
+        filtered.append(restaurant)
+
+    return filtered, None
+
+@app.route("/")
+def home():
+    restaurants = load_restaurants()
+    options = get_filter_options(restaurants)
+    return render_template("index.html", options=options, restaurants=restaurants)
+
+@app.route("/spin-options", methods=["POST"])
+def spin_options():
+    payload = request.get_json(silent=True) or {}
+    cuisine = payload.get("cuisine")
+    price = payload.get("price")
+    dietary = payload.get("dietary")
+
+    restaurants = load_restaurants()
+    filtered, error = filter_restaurants(restaurants, cuisine, price, dietary)
+
+    if error:
+        return jsonify({"ok": False, "message": error, "restaurants": []}), 400
+
+    if not filtered:
+        return jsonify({
+            "ok": True,
+            "message": "No restaurants matched those filters. Try changing price or dietary preference.",
+            "restaurants": [],
+        })
+
+    return jsonify({
+        "ok": True,
+        "message": f"Found {len(filtered)} restaurant(s). Spin to choose one.",
+        "restaurants": filtered,
+    })
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=5000)
