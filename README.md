@@ -77,6 +77,7 @@ Dataset preparation
 Documentation (README)
 
 📍 Future Improvements
+
 Add filtering (price, cuisine, ratings)
 Improve recommendation algorithm
 Enhance UI/UX design
