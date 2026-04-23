@@ -1,40 +1,941 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Restaurant Finder</title>
+    <title>Dallas Restaurant Jackpot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        @font-face {
+            font-family: "Midcent Disco";
+            src: local("Midcent Disco");
+            font-display: swap;
+        }
+
+        :root {
+            --bg-1: #08123f;
+            --bg-2: #102b77;
+            --bg-3: #0b1f58;
+            --ink: #f5e3c1;
+            --muted-ink: #d9e5ff;
+            --gold-1: #fbe2a5;
+            --gold-2: #d8a442;
+            --gold-3: #7f5419;
+            --panel-red: #5f1118;
+            --panel-red-deep: #35060d;
+            --metal-1: #8f0f18;
+            --metal-2: #3e060d;
+            --shadow-1: 0 18px 46px rgba(0, 0, 0, 0.45);
+            --shadow-2: 0 10px 26px rgba(0, 0, 0, 0.5);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Trebuchet MS", "Franklin Gothic Medium", "Arial Narrow", sans-serif;
+            color: var(--ink);
+            background:
+                radial-gradient(circle at 18% 22%, rgba(153, 196, 255, 0.35) 0, rgba(153, 196, 255, 0) 32%),
+                radial-gradient(circle at 78% 20%, rgba(140, 241, 255, 0.26) 0, rgba(140, 241, 255, 0) 30%),
+                radial-gradient(circle at 50% 130%, rgba(22, 8, 71, 0.85) 0, rgba(22, 8, 71, 0) 56%),
+                radial-gradient(circle at 10% 60%, rgba(255, 255, 255, 0.18) 0 2px, transparent 3px),
+                radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.2) 0 1px, transparent 2px),
+                radial-gradient(circle at 70% 38%, rgba(255, 255, 255, 0.17) 0 2px, transparent 3px),
+                linear-gradient(180deg, var(--bg-1), var(--bg-2) 44%, var(--bg-3));
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        .food-bg-layer {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .food-bg-icon {
+            position: absolute;
+            transform: translate(-50%, -50%) rotate(var(--rotate));
+            font-size: var(--size);
+            opacity: var(--opacity);
+            filter: drop-shadow(0 3px 4px rgba(0, 0, 0, 0.3));
+            animation: float-food var(--dur) ease-in-out infinite alternate;
+        }
+
+        @keyframes float-food {
+            0% {
+                transform: translate(-50%, -50%) rotate(var(--rotate));
+            }
+
+            100% {
+                transform: translate(calc(-50% + var(--drift-x)), calc(-50% + var(--drift-y))) rotate(calc(var(--rotate) + 5deg));
+            }
+        }
+
+        .page {
+            width: 100%;
+            max-width: 1100px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .title {
+            margin: 8px 0 0;
+            text-align: center;
+            font-family: "Midcent Disco", "Trebuchet MS", "Lucida Sans Unicode", sans-serif;
+            letter-spacing: 1.1px;
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            line-height: 1.1;
+            color: var(--gold-1);
+            text-shadow:
+                0 2px 0 #3d200a,
+                0 0 16px rgba(248, 190, 90, 0.32);
+        }
+
+        .controls-wrap {
+            width: 100%;
+            background: linear-gradient(180deg, rgba(11, 35, 96, 0.84), rgba(7, 23, 70, 0.84));
+            border: 2px solid rgba(116, 168, 255, 0.42);
+            border-radius: 22px;
+            box-shadow: var(--shadow-1);
+            backdrop-filter: blur(2px);
+            padding: 16px;
+        }
+
+        .controls-row {
+            display: flex;
+            gap: 12px;
+            align-items: end;
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            padding-bottom: 4px;
+        }
+
+        .control-group {
+            min-width: 220px;
+            flex: 1 1 220px;
+        }
+
+        .wheel-panel {
+            background: linear-gradient(180deg, rgba(8, 27, 79, 0.82), rgba(7, 18, 61, 0.82));
+            border: 2px solid rgba(110, 170, 255, 0.5);
+            border-radius: 26px;
+            box-shadow: var(--shadow-1);
+            padding: 20px 20px 24px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wheel-panel::before {
+            content: "";
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            right: 14px;
+            height: 8px;
+            border-radius: 999px;
+            background: repeating-radial-gradient(circle at center, #8cc0ff 0 3px, #3570ca 3px 6px);
+            box-shadow: 0 0 14px rgba(128, 198, 255, 0.44);
+            opacity: 0.78;
+            pointer-events: none;
+        }
+
+        label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: #e4efff;
+        }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid rgba(114, 168, 255, 0.45);
+            border-radius: 13px;
+            background: linear-gradient(180deg, #f4f8ff, #dce8ff);
+            color: #11284e;
+            font-size: 0.95rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        select:focus {
+            border-color: #9dd6ff;
+            box-shadow: 0 0 0 4px rgba(157, 214, 255, 0.24);
+        }
+
+        .note {
+            margin: 10px 0 0;
+            font-size: 0.9rem;
+            text-align: center;
+            color: var(--muted-ink);
+        }
+
+        .status {
+            margin-top: 8px;
+            min-height: 24px;
+            font-weight: 600;
+            color: #9fe1ff;
+            text-align: center;
+        }
+
+        .jackpot-wrap {
+            width: min(92vw, 540px);
+            margin: 10px auto 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+            position: relative;
+        }
+
+        .food-ring {
+            position: absolute;
+            inset: -36px -34px -24px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .food-ring .icon {
+            position: absolute;
+            font-size: clamp(2rem, 4.2vw, 3.2rem);
+            filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.35));
+            transform: rotate(var(--r));
+        }
+
+        .food-ring .icon.one { top: -6px; left: -8px; --r: -8deg; }
+        .food-ring .icon.two { top: -26px; left: 46%; --r: 6deg; }
+        .food-ring .icon.three { top: 18px; right: -14px; --r: 8deg; }
+        .food-ring .icon.four { top: 48%; left: -28px; --r: -12deg; }
+        .food-ring .icon.five { top: 42%; right: -28px; --r: 10deg; }
+        .food-ring .icon.six { bottom: 24px; left: -16px; --r: -10deg; }
+        .food-ring .icon.seven { bottom: -18px; left: 34%; --r: 5deg; }
+        .food-ring .icon.eight { bottom: 10px; right: -12px; --r: -6deg; }
+
+        .machine-marquee {
+            width: min(100%, 420px);
+            border-radius: 20px 20px 12px 12px;
+            background: linear-gradient(180deg, #f8d88f, #d19d42 58%, #8e5a1e);
+            border: 3px solid #714712;
+            box-shadow: 0 8px 14px rgba(0, 0, 0, 0.42);
+            padding: 12px 18px 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .machine-marquee::before {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            right: 12px;
+            height: 10px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(255, 246, 214, 0.75), rgba(255, 246, 214, 0));
+            pointer-events: none;
+        }
+
+        .signal-lights {
+            display: flex;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .signal-light {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            border: 2px solid #6e1f10;
+            background: radial-gradient(circle at 35% 35%, #ffd2ac 8%, #ff5f43 42%, #ad1e16 82%);
+            box-shadow: 0 0 14px rgba(255, 125, 87, 0.66);
+        }
+
+        .signal-light:nth-child(2) {
+            animation: blink-light 1.2s ease-in-out infinite;
+        }
+
+        @keyframes blink-light {
+            0%, 100% { opacity: 0.85; }
+            50% { opacity: 1; box-shadow: 0 0 20px rgba(255, 141, 97, 0.95); }
+        }
+
+        .jackpot-frame {
+            --item-height: 72px;
+            position: relative;
+            width: min(100%, 420px);
+            border-radius: 12px 12px 20px 20px;
+            padding: 18px 14px 16px;
+            background:
+                linear-gradient(180deg, #f7db99 0%, #dfb35f 44%, #b67c2a 75%, #8b581c 100%);
+            border: 3px solid #7c4b15;
+            box-shadow: var(--shadow-2);
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .jackpot-frame::before,
+        .jackpot-frame::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .jackpot-frame::before {
+            background: radial-gradient(circle at 50% -10%, rgba(255, 246, 209, 0.75), rgba(255, 246, 209, 0));
+            opacity: 0.55;
+        }
+
+        .jackpot-frame::after {
+            border: 2px solid rgba(255, 230, 177, 0.5);
+            border-radius: 8px 8px 16px 16px;
+        }
+
+        .jackpot-window {
+            height: var(--item-height);
+            border-radius: 10px;
+            overflow: hidden;
+            background: linear-gradient(180deg, #fff4da 0%, #f2d9a6 50%, #ffe9c7 100%);
+            border: 3px solid #836131;
+            box-shadow:
+                inset 0 7px 12px rgba(255, 255, 255, 0.6),
+                inset 0 -10px 14px rgba(113, 74, 20, 0.3);
+            position: relative;
+        }
+
+        .jackpot-window::before,
+        .jackpot-window::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 22px;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .jackpot-window::before {
+            top: 0;
+            background: linear-gradient(180deg, rgba(80, 43, 7, 0.5), transparent);
+        }
+
+        .jackpot-window::after {
+            bottom: 0;
+            background: linear-gradient(0deg, rgba(80, 43, 7, 0.5), transparent);
+        }
+
+        .reel {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            transform: translateY(0);
+            transition: none;
+            will-change: transform;
+        }
+
+        .reel.spinning {
+            transition: transform 3.9s cubic-bezier(0.12, 0.78, 0.17, 1);
+        }
+
+        .reel-item {
+            height: var(--item-height);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 18px;
+            color: #711114;
+            font-family: "Midcent Disco", "Trebuchet MS", sans-serif;
+            font-weight: 700;
+            font-size: clamp(1.2rem, 2.6vw, 1.7rem);
+            letter-spacing: 0.06em;
+            text-align: center;
+            text-transform: none;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-bottom: 1px solid rgba(141, 95, 20, 0.24);
+            text-shadow: 0 1px 0 rgba(255, 255, 255, 0.45);
+        }
+
+        .reel-item.winner {
+            background: linear-gradient(90deg, rgba(255, 113, 94, 0.35), rgba(255, 231, 177, 0.52), rgba(255, 113, 94, 0.35));
+            color: #6a0f12;
+        }
+
+        .celebration-layer {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        .streamer {
+            position: absolute;
+            width: 8px;
+            height: 26px;
+            left: var(--left);
+            top: -10%;
+            background: var(--color);
+            border-radius: 999px;
+            transform: translate3d(0, -20px, 0) rotate(0deg);
+            animation: streamer-fall var(--duration) ease-in var(--delay) forwards;
+            box-shadow: 0 0 10px color-mix(in srgb, var(--color) 70%, #ffffff 30%);
+        }
+
+        @keyframes streamer-fall {
+            0% {
+                opacity: 0;
+                transform: translate3d(0, -20px, 0) rotate(0deg);
+            }
+
+            10% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+                transform: translate3d(var(--drift), 125vh, 0) rotate(560deg);
+            }
+        }
+
+        .spin-btn {
+            position: relative;
+            z-index: 8;
+            border: 2px solid #f0c167;
+            background: linear-gradient(180deg, #ff6550, #d42d2d 52%, #8a0f1c);
+            color: #ffe9ca;
+            min-width: 210px;
+            height: 62px;
+            border-radius: 999px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            cursor: pointer;
+            box-shadow:
+                0 10px 18px rgba(0, 0, 0, 0.45),
+                inset 0 2px 0 rgba(255, 255, 255, 0.24);
+            transition: transform 0.18s ease, filter 0.2s ease;
+            text-shadow: 0 1px 0 rgba(0, 0, 0, 0.45);
+        }
+
+        .spin-btn::before {
+            content: "";
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            right: 12px;
+            height: 9px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, rgba(255, 228, 180, 0.75), rgba(255, 228, 180, 0));
+            pointer-events: none;
+        }
+
+        .spin-btn:hover {
+            filter: brightness(1.07);
+        }
+
+        .spin-btn:active {
+            transform: scale(0.97);
+        }
+
+        .spin-btn:disabled {
+            cursor: not-allowed;
+            opacity: 0.72;
+        }
+
+        .meta {
+            margin-top: 12px;
+            text-align: center;
+            font-size: 0.95rem;
+            min-height: 20px;
+            color: #e6ecff;
+        }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(22, 8, 14, 0.72);
+            z-index: 20;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            backdrop-filter: blur(2px);
+            overflow: hidden;
+        }
+
+        .modal-backdrop.show {
+            display: flex;
+        }
+
+        .modal {
+            position: relative;
+            z-index: 2;
+            width: min(600px, 100%);
+            background: linear-gradient(180deg, #65121b, #3b0811);
+            border: 2px solid #b67a2a;
+            border-radius: 18px;
+            padding: 20px;
+            box-shadow: 0 22px 50px rgba(0, 0, 0, 0.42);
+            color: #ffe8c8;
+        }
+
+        .modal h2 {
+            margin: 0 0 10px;
+        }
+
+        .chips {
+            margin: 12px 0;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            background: linear-gradient(180deg, #e5bf7b, #d19b49);
+            border: 1px solid #8f5f22;
+            border-radius: 999px;
+            padding: 4px 10px;
+            font-size: 0.85rem;
+            color: #341607;
+        }
+
+        .actions {
+            margin-top: 14px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .close-btn {
+            border: 2px solid #f3c36f;
+            padding: 10px 14px;
+            border-radius: 12px;
+            background: linear-gradient(180deg, #ff5744, #d12c2e 52%, #890c1b);
+            color: #ffe9ca;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.35);
+        }
+
+        @media (max-width: 700px) {
+            body {
+                padding: 14px;
+            }
+
+            .controls-row {
+                gap: 10px;
+            }
+
+            .control-group {
+                min-width: 180px;
+            }
+
+            .spin-btn {
+                min-width: 160px;
+                height: 56px;
+                font-size: 0.85rem;
+            }
+
+            .jackpot-frame {
+                --item-height: 64px;
+                padding: 12px;
+            }
+
+            .machine-marquee {
+                width: min(100%, 360px);
+            }
+
+            .food-ring {
+                inset: -18px -14px -8px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reel.spinning {
+                transition-duration: 0.2s;
+            }
+
+            .streamer {
+                animation: none;
+                opacity: 0;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Dallas Restaurant Recommender</h1>
+    <div id="food-bg-layer" class="food-bg-layer" aria-hidden="true"></div>
+    <div class="page">
+        <h1 class="title">I'm in Dallas and IDK Where to Eat</h1>
 
-    <form action="/recommend" method="POST">
-        <label>Cuisine:</label>
-        <select name="cuisine">
-            <option>Any</option>
-            <option>American</option>
-            <option>Mexican</option>
-        </select>
+        <section class="controls-wrap">
+            <form id="filters-form" class="controls-row">
+                <div class="control-group">
+                    <label for="cuisine">Cuisine (optional)</label>
+                    <select id="cuisine" name="cuisine">
+                        <option value="Any">Any</option>
+                        {% for cuisine in options.cuisines %}
+                        <option value="{{ cuisine }}">{{ cuisine }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <br><br>
+                <div class="control-group">
+                    <label for="price">Price (optional)</label>
+                    <select id="price" name="price">
+                        <option value="Any" selected>Any</option>
+                        {% for price in options.prices %}
+                        <option value="{{ price }}">{{ price }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
 
-        <label>Price:</label>
-        <select name="price">
-            <option>Any</option>
-            <option>$</option>
-            <option>$$</option>
-        </select>
+                <div class="control-group">
+                    <label for="dietary">Dietary (optional)</label>
+                    <select id="dietary" name="dietary">
+                        <option value="Any">No restriction</option>
+                        {% for tag in options.dietary %}
+                        <option value="{{ tag }}">{{ tag|capitalize }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
 
-        <br><br>
+            <p class="note">Choose filters in the row above, then press Click Here.</p>
+            <p id="status" class="status" aria-live="polite"></p>
+        </section>
 
-        <label>Dietary:</label>
-        <select name="dietary">
-            <option>Any</option>
-            <option>vegetarian</option>
-            <option>vegan</option>
-        </select>
+        <section class="wheel-panel">
+            <div class="jackpot-wrap" aria-label="Restaurant jackpot">
+                <div class="food-ring" aria-hidden="true">
+                    <span class="icon one">🍔</span>
+                    <span class="icon two">🍕</span>
+                    <span class="icon three">🍣</span>
+                    <span class="icon four">🍇</span>
+                    <span class="icon five">🥦</span>
+                    <span class="icon six">🌮</span>
+                    <span class="icon eight">🍜</span>
+                </div>
+                <div class="machine-marquee" aria-hidden="true">
+                    <div class="signal-lights">
+                        <span class="signal-light"></span>
+                        <span class="signal-light"></span>
+                        <span class="signal-light"></span>
+                    </div>
+                </div>
+                <div class="jackpot-frame">
+                    <div class="jackpot-window">
+                        <ul id="reel" class="reel"></ul>
+                    </div>
+                </div>
+                <button id="spin-btn" class="spin-btn" type="button">CLICK HERE</button>
+            </div>
+            <p id="wheel-meta" class="meta"></p>
+        </section>
+    </div>
 
-        <br><br>
+    <div id="result-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="result-title">
+        <div id="celebration-layer" class="celebration-layer" aria-hidden="true"></div>
+        <div class="modal">
+            <h2 id="result-title"></h2>
+            <p id="result-description"></p>
+            <div class="chips" id="result-chips"></div>
+            <div class="actions">
+                <button id="close-modal" class="close-btn" type="button">Close</button>
+            </div>
+        </div>
+    </div>
 
-        <button type="submit">Find Restaurants</button>
-    </form>
+    <script>
+        const reelEl = document.getElementById("reel");
+        const foodBgLayer = document.getElementById("food-bg-layer");
+        const spinBtn = document.getElementById("spin-btn");
+        const statusEl = document.getElementById("status");
+        const metaEl = document.getElementById("wheel-meta");
+        const form = document.getElementById("filters-form");
+        const modal = document.getElementById("result-modal");
+        const jackpotFrame = document.querySelector(".jackpot-frame");
+        const celebrationLayer = document.getElementById("celebration-layer");
+        const closeModalBtn = document.getElementById("close-modal");
+        const titleEl = document.getElementById("result-title");
+        const descEl = document.getElementById("result-description");
+        const chipsEl = document.getElementById("result-chips");
+
+        const REPEAT_LOOPS = 10;
+        const STREAMER_COLORS = ["#74c9ff", "#f7d978", "#fda085", "#86efac", "#f9a8d4", "#c4b5fd"];
+        const FOOD_ICONS = ["🍔", "🍕", "🍟", "🍣", "🍜", "🌮", "🍩", "🍇", "🍓", "🍉", "🍍", "🥑", "🥦", "🥕", "🌽", "🍅"];
+        const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+        const initialRestaurants = {{ restaurants | tojson }};
+        let candidates = Array.isArray(initialRestaurants) ? initialRestaurants : [];
+        let spinning = false;
+        let celebrationTimer = null;
+        let previouslyShownIds = new Set();
+
+        function renderFoodBackground() {
+            if (!foodBgLayer) {
+                return;
+            }
+
+            foodBgLayer.replaceChildren();
+
+            const iconCount = 52;
+            for (let i = 0; i < iconCount; i += 1) {
+                const icon = document.createElement("span");
+                icon.className = "food-bg-icon";
+                icon.textContent = FOOD_ICONS[i % FOOD_ICONS.length];
+
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                const size = 24 + Math.random() * 30;
+                const rotate = `${(Math.random() * 34 - 17).toFixed(1)}deg`;
+                const opacity = 0.24 + Math.random() * 0.32;
+                const dur = `${(5 + Math.random() * 4).toFixed(2)}s`;
+                const driftX = `${(Math.random() * 18 - 9).toFixed(1)}px`;
+                const driftY = `${(Math.random() * 18 - 9).toFixed(1)}px`;
+
+                icon.style.left = `${x.toFixed(2)}%`;
+                icon.style.top = `${y.toFixed(2)}%`;
+                icon.style.setProperty("--size", `${size.toFixed(1)}px`);
+                icon.style.setProperty("--rotate", rotate);
+                icon.style.setProperty("--opacity", opacity.toFixed(2));
+                icon.style.setProperty("--dur", dur);
+                icon.style.setProperty("--drift-x", driftX);
+                icon.style.setProperty("--drift-y", driftY);
+                foodBgLayer.appendChild(icon);
+            }
+        }
+
+        function setStatus(message) {
+            statusEl.textContent = message;
+        }
+
+        function normalizeName(name) {
+            return (name || "").trim() || "Unknown Restaurant";
+        }
+
+        function getItemHeight() {
+            const fallback = 72;
+            if (!jackpotFrame) {
+                return fallback;
+            }
+
+            const rawValue = getComputedStyle(jackpotFrame).getPropertyValue("--item-height");
+            const parsed = Number.parseFloat(rawValue);
+            return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+        }
+
+        async function fetchCandidates() {
+            const payload = {
+                cuisine: document.getElementById("cuisine").value,
+                price: document.getElementById("price").value,
+                dietary: document.getElementById("dietary").value,
+            };
+
+            setStatus("Loading restaurants for your filters...");
+
+            const response = await fetch("/spin-options", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(payload),
+            });
+
+            const data = await response.json();
+            if (!response.ok || !data.ok) {
+                setStatus(data.message || "Could not load restaurants.");
+                return null;
+            }
+
+            setStatus(data.message);
+            return data.restaurants || [];
+        }
+
+        function clearCelebration() {
+            celebrationLayer.replaceChildren();
+            if (celebrationTimer) {
+                clearTimeout(celebrationTimer);
+                celebrationTimer = null;
+            }
+        }
+
+        function triggerStreamers() {
+            clearCelebration();
+
+            if (prefersReducedMotion.matches) {
+                return;
+            }
+
+            const count = 70;
+            for (let i = 0; i < count; i += 1) {
+                const streamer = document.createElement("span");
+                streamer.className = "streamer";
+
+                const left = Math.random() * 100;
+                const drift = `${(Math.random() * 120 - 60).toFixed(1)}px`;
+                const duration = `${(1.8 + Math.random() * 1.4).toFixed(2)}s`;
+                const delay = `${(Math.random() * 0.45).toFixed(2)}s`;
+                const color = STREAMER_COLORS[i % STREAMER_COLORS.length];
+
+                streamer.style.setProperty("--left", `${left.toFixed(1)}%`);
+                streamer.style.setProperty("--drift", drift);
+                streamer.style.setProperty("--duration", duration);
+                streamer.style.setProperty("--delay", delay);
+                streamer.style.setProperty("--color", color);
+                celebrationLayer.appendChild(streamer);
+            }
+
+            celebrationTimer = setTimeout(() => {
+                clearCelebration();
+            }, 3400);
+        }
+
+        function drawIdleReel(items) {
+            reelEl.classList.remove("spinning");
+            reelEl.style.transform = "translateY(0px)";
+            reelEl.replaceChildren();
+
+            if (!items.length) {
+                const emptyItem = document.createElement("li");
+                emptyItem.className = "reel-item";
+                emptyItem.textContent = "No restaurants loaded yet";
+                reelEl.appendChild(emptyItem);
+                metaEl.textContent = "No options loaded. Adjust filters and spin to fetch restaurants.";
+                return;
+            }
+
+            const preview = items.slice(0, Math.min(items.length, 7));
+            preview.forEach((item) => {
+                const reelItem = document.createElement("li");
+                reelItem.className = "reel-item";
+                reelItem.textContent = normalizeName(item.name);
+                reelEl.appendChild(reelItem);
+            });
+            metaEl.textContent = `${items.length} option(s) ready for jackpot spin.`;
+        }
+
+        function buildSpinReel(items, winnerIndex) {
+            const reelItems = [];
+
+            for (let loop = 0; loop < REPEAT_LOOPS; loop += 1) {
+                items.forEach((item) => {
+                    reelItems.push({
+                        name: normalizeName(item.name),
+                        winner: false,
+                    });
+                });
+            }
+
+            items.forEach((item, idx) => {
+                reelItems.push({
+                    name: normalizeName(item.name),
+                    winner: idx === winnerIndex,
+                });
+            });
+
+            reelEl.replaceChildren();
+            reelItems.forEach((entry) => {
+                const reelItem = document.createElement("li");
+                reelItem.className = `reel-item${entry.winner ? " winner" : ""}`;
+                reelItem.textContent = entry.name;
+                reelEl.appendChild(reelItem);
+            });
+
+            return (REPEAT_LOOPS * items.length) + winnerIndex;
+        }
+
+        function showResult(restaurant) {
+            titleEl.textContent = restaurant.name;
+            descEl.textContent = restaurant.description;
+            chipsEl.innerHTML = "";
+
+            const chips = [
+                `Cuisine: ${restaurant.cuisine}`,
+                `Price: ${restaurant.price}`,
+                `Dietary: ${(restaurant.dietary_tags || []).join(", ") || "None listed"}`,
+            ];
+
+            chips.forEach((text) => {
+                const chip = document.createElement("span");
+                chip.className = "chip";
+                chip.textContent = text;
+                chipsEl.appendChild(chip);
+            });
+
+            modal.classList.add("show");
+            closeModalBtn.focus();
+        }
+
+        function getSmartRandomWinner(items) {
+            if (!items.length) return 0;
+            
+            const unshownItems = items.filter((item, idx) => !previouslyShownIds.has(idx));
+            
+            if (unshownItems.length === 0) {
+                previouslyShownIds.clear();
+                return Math.floor(Math.random() * items.length);
+            }
+            
+            const winnerIdx = items.indexOf(unshownItems[Math.floor(Math.random() * unshownItems.length)]);
+            previouslyShownIds.add(winnerIdx);
+            return winnerIdx;
+        }
+
+        async function performSpin() {
+            if (spinning || !candidates.length) {
+                return;
+            }
+
+            spinning = true;
+            spinBtn.disabled = true;
+
+            const winnerIndex = getSmartRandomWinner(candidates);
+            const targetScroll = buildSpinReel(candidates, winnerIndex);
+            const itemHeight = getItemHeight();
+            const finalOffset = -(targetScroll * itemHeight);
+
+            reelEl.classList.add("spinning");
+            reelEl.style.transform = `translateY(${finalOffset}px)`;
+
+            setTimeout(() => {
+                spinning = false;
+                spinBtn.disabled = false;
+                triggerStreamers();
+                showResult(candidates[winnerIndex]);
+            }, 4000);
+        }
+
+        closeModalBtn.addEventListener("click", () => {
+            modal.classList.remove("show");
+        });
+
+        spinBtn.addEventListener("click", performSpin);
+
+        form.addEventListener("change", async () => {
+            candidates = await fetchCandidates();
+            if (candidates && candidates.length > 0) {
+                drawIdleReel(candidates);
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderFoodBackground();
+            drawIdleReel(candidates);
+        });
+    </script>
 </body>
 </html>
