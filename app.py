@@ -21,17 +21,17 @@ def home():
 
 @app.route("/recommend", methods=["POST"])
 def recommend():
-    cuisine = request.form.get("cuisine", "any").strip().lower()
-    price   = request.form.get("price", "any").strip().lower()
+    cuisine = request.form.get("cuisine", "any")
+    price   = request.form.get("price", "any")
     dietary = request.form.get("dietary", "any").strip().lower()
 
     restaurants = load_restaurants()
-    
+
     filtered = []
     for r in restaurants:
-        match_cuisine = cuisine == "any" or r["cuisine"].lower() == cuisine
-        match_price   = price == "any"   or r["price"].lower() == price
-        match_dietary = dietary == "any" or dietary in r["dietary_tags"]
+        match_cuisine = cuisine == "any" or r["cuisine"].lower() == cuisine.lower()
+        match_price   = price == "any"   or r["price"] == price
+        match_dietary = dietary == "any"  or dietary in r["dietary_tags"]
 
         if match_cuisine and match_price and match_dietary:
             filtered.append(r)
