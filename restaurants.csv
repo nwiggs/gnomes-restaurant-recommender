@@ -23,10 +23,10 @@ Wabi House,Japanese,$$,"",Ramen and izakaya dishes
 Malai Kitchen,Thai,$$,"gluten-free",Modern Thai and Vietnamese
 Taverna,Italian,$$,"vegetarian",Italian dining and brunch
 Ascension Coffee,American,$,"vegetarian",Coffee and light meals
-Snooze A.M. Eatery,Breakfast,$$,vegetarian,Brunch-focused restaurant
-Sushi Azabu,Japanese,$$$,gluten-free,Upscale sushi and Japanese cuisine
+Snooze A.M. Eatery,Breakfast,$$,"vegetarian",Brunch-focused restaurant
+Sushi Azabu,Japanese,$$$,"gluten-free",Upscale sushi and Japanese cuisine
 Blue Island Oyster Bar,Seafood,$$,"",Fresh oysters and seafood
-The Joule Hotel Dining,American,$$$,"vegetarian",Fine dining in The Joule
+The Joule Dining,American,$$$,"vegetarian",Fine dining inside The Joule Hotel
 Nobu Dallas,Japanese,$$$,"gluten-free",World-renowned Japanese cuisine
 Del Frisco's Grille,Steakhouse,$$$,"gluten-free",Premium steaks and seafood
 The Mansion Restaurant,American,$$$,"vegetarian",Elegant Southern cuisine
@@ -45,8 +45,71 @@ Whataburger,American,$,"",Texas fast food institution
 Chick-fil-A,American,$,"",Chicken sandwiches
 Panda Express,Chinese,$,"vegetarian",Fast Chinese food
 PF Chang's,Chinese,$$,"vegetarian, gluten-free",Asian fusion
-Chili's,American,$$,"vegetarian",Casual dining chain
 Olive Garden,Italian,$$,"vegetarian",Italian-American favorites
 Red Lobster,Seafood,$$,"",Seafood restaurant chain
-LongHorn Steakhouse,Steakhouse,$$,"gluten-free",Steakhouse chain
 Texas Roadhouse,Steakhouse,$$,"gluten-free",Texas-style steakhouse
+Lucia,Italian,$$$,"",Award-winning intimate Italian restaurant
+Town Hearth,Steakhouse,$$$,"gluten-free",Upscale steakhouse with glamorous atmosphere
+Al Biernat's,Steakhouse,$$$,"gluten-free",Dallas classic steakhouse and seafood
+Dakota's Steakhouse,Steakhouse,$$$,"gluten-free",Underground upscale steakhouse
+Nick & Sam's,Steakhouse,$$$,"gluten-free",Luxury steakhouse popular for celebrations
+Katy Trail Ice House,American,$$,"",Beer garden and comfort food near Katy Trail
+Pie Tap Pizza Workshop,Italian,$$,"vegetarian",Wood-fired pizza and pasta
+Cane Rosso,Italian,$$,"vegetarian",Authentic Neapolitan pizza
+Meddlesome Moth,American,$$,"vegetarian",Gastropub with craft beer
+E-Bar Tex Mex,Mexican,$$,"vegetarian",Popular neighborhood Tex-Mex restaurant
+José,Mexican,$$$,"vegetarian, gluten-free",Modern upscale Mexican cuisine
+Javier's Gourmet Mexicano,Mexican,$$$,"gluten-free",Upscale Mexican dining
+Sixty Vines,American,$$,"vegetarian",Wine-focused dining with shared plates
+The Henry,American,$$,"vegetarian",Stylish brunch and dinner destination
+Sadelle's,Breakfast,$$$,"vegetarian",Upscale brunch and bakery favorites
+The Porch,American,$$,"vegetarian",Neighborhood comfort food restaurant
+Meso Maya,Mexican,$$,"gluten-free",Regional Mexican cuisine
+Rodeo Goat,American,$$,"",Popular gourmet burger restaurant
+Billy Can Can,American,$$$,"",Texas-inspired upscale dining
+Mot Hai Ba,Vietnamese,$$,"gluten-free",Contemporary Vietnamese cuisine
+Tei-An,Japanese,$$$,"vegetarian",Upscale soba house and sushi
+Shinsei,Japanese,$$$,"gluten-free",Modern Asian fusion and sushi
+Mercat Bistro,French,$$$,"vegetarian",Parisian-style bistro in downtown Dallas
+Rise Soufflé,French,$$$,"vegetarian",French soufflé restaurant
+Ocean Prime,Seafood,$$$,"gluten-free",Upscale seafood and steak restaurant
+Ferris Wheelers BBQ,BBQ,$$,"",BBQ with rooftop patio and live music
+Hutchins BBQ,BBQ,$$,"",Highly rated Texas BBQ destination
+Loro Asian Smokehouse,Asian,$$,"gluten-free",Asian smokehouse by acclaimed chefs
+Monkey King Noodle Company,Chinese,$,"vegetarian",Hand-pulled noodles and dumplings
+The Biscuit Bar,Breakfast,$,"vegetarian",Southern biscuit sandwiches
+Yolk,Breakfast,$$,"vegetarian",Breakfast and brunch chain
+Cafe Brazil,Breakfast,$,"vegetarian",Late-night breakfast favorite
+Knife Steakhouse,Steakhouse,$$$,"gluten-free",Modern steakhouse by celebrity chef
+Ziziki's,Mediterranean,$$,"vegetarian, gluten-free",Greek and Mediterranean cuisine
+Parigi,French,$$$,"vegetarian",Elegant neighborhood French restaurant
+Sachet,Mediterranean,$$$,"vegetarian",Modern Mediterranean small plates
+Celebration Restaurant,American,$$,"vegetarian",Southern comfort food and pies
+Haywire,American,$$$,"",Texas ranch-style dining
+Neighborhood Services,American,$$,"",Neighborhood American comfort food
+Cafe Momentum,American,$$,"vegetarian",Seasonal nonprofit-driven dining
+Las Palmas Tex-Mex,Mexican,$$,"vegetarian",Stylish Tex-Mex destination
+La Ventana,Mexican,$,"vegetarian",Walk-up tacos and margaritas
+Hudson House,Seafood,$$$,"gluten-free",Seafood and East Coast-inspired dining
+Royal China,Chinese,$$,"vegetarian",Traditional Chinese cuisine and dumplings
+Miriam Cocina Latina,Latin,$$,"gluten-free",Latin comfort dishes and brunch
+Barcelona Wine Bar,Spanish,$$$,"vegetarian",Tapas and wine bar experience
+Kenny's Wood Fired Grill,Steakhouse,$$$,"gluten-free",Classic steakhouse and seafood
+San Martin Bakery,Breakfast,$$,"vegetarian",Bakery cafe with breakfast and lunch
+Tacodeli,Mexican,$,"vegetarian",Austin-style tacos and breakfast tacos
+Cafe Pacific,Seafood,$$$,"gluten-free",Upscale seafood dining
+Anaya's Seafood,Seafood,$$,"gluten-free",Fresh seafood and Cajun dishes
+Sea Breeze Fish Market,Seafood,$$,"gluten-free",Fresh fish market and dining
+Meso Grill,Mediterranean,$$,"vegetarian",Mediterranean wraps and bowls
+Andalous Mediterranean Grill,Mediterranean,$$,"vegetarian, gluten-free",Mediterranean buffet and kebabs
+Fadi's Mediterranean Grill,Mediterranean,$$,"vegetarian, vegan",Mediterranean cafeteria-style dining
+Taj Mahal Indian Restaurant,Indian,$$,"vegetarian",Traditional Indian curries and naan
+Mughlai Fine Indian Cuisine,Indian,$$,"vegetarian, gluten-free",North Indian cuisine
+India Palace,Indian,$$,"vegetarian",Classic Indian buffet and dishes
+Roti Grill,Indian,$,"vegetarian",Fast-casual Indian comfort food
+Bombay Chopsticks,Indian,$$,"vegetarian",Indo-Chinese fusion dining
+Ten Ramen,Japanese,$$,"",Popular ramen spot
+Sushi Robata,Japanese,$$$,"gluten-free",Japanese sushi and robata grill
+Oishii Sushi,Japanese,$$$,"gluten-free",Creative sushi and sashimi
+Mr Max,Japanese,$$,"",Authentic izakaya dining
+Tatsu Dallas,Japanese,$$$,"gluten-free",High-end omakase experience
