@@ -824,7 +824,7 @@
                 reelItem.textContent = normalizeName(item.name);
                 reelEl.appendChild(reelItem);
             });
-            metaEl.textContent = `${items.length} option(s) ready for jackpot spin.`;
+            metaEl.textContent = `${items.length} option(s) loaded. Spin the jackpot to select a restaurant!`;
         }
 
         function buildSpinReel(items, winnerIndex) {
@@ -911,7 +911,7 @@
                 spinning = false;
                 spinBtn.disabled = false;
                 setStatus(`Jackpot landed on ${normalizeName(winner.name)}.`);
-                metaEl.textContent = "Winner locked. Celebration triggered.";
+                metaEl.textContent = "Winner Selected.";
                 showResult(winner);
                 triggerStreamers();
             };
