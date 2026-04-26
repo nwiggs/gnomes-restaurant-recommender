@@ -17,6 +17,8 @@ def load_restaurants():
         with open("restaurants.csv", newline="", encoding="utf-8") as csvfile:
             reader = csv.DictReader(csvfile)
             for row in reader:
+                # Filter out None keys that can appear if row has extra fields
+                row = {k: v for k, v in row.items() if k is not None}
                 row["dietary_tags"] = [tag.strip().lower() for tag in row["dietary_tags"].split(",")]
                 restaurants.append(row)
     except FileNotFoundError:
@@ -25,9 +27,9 @@ def load_restaurants():
 
 
 def get_filter_options(restaurants):
-    cuisines = sorted({r["cuisine"] for r in restaurants})
-    prices = sorted({r["price"] for r in restaurants}, key=len)
-    dietary = sorted({tag for r in restaurants for tag in r["dietary_tags"]})
+    cuisines = sorted({r["cuisine"] for r in restaurants if r.get("cuisine")})
+    prices = sorted({r["price"] for r in restaurants if r.get("price")}, key=len)
+    dietary = sorted({tag for r in restaurants for tag in r["dietary_tags"] if tag})
     return {
         "cuisines": cuisines,
         "prices": prices,
